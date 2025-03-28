@@ -1,31 +1,81 @@
-import React from 'react'
-import Studentgraph from './Studentgraph'
+import React from 'react';
+import Studentgraph from './Studentgraph';
+import RegData from './RegData';
 
 function RMain() {
   return (
-    <div className="row ms-lg-6 ms-3">
-        <div className="col-lg-6 pt-5 text-center text-lg-start">
-        <div class="row">
-                     <div class="studpic col-lg-4 col-4 col-sm-3">
-                    <img src="../public/mami.jpg" class="pic2 marp mt-5 rounded-circle" width="90%" alt=""/>
-                     </div>
-                  <div class="studdata col-lg-6 col-sm-5 col-6 mt-4">
-                    <div class="card-text mt-3 ms-3">
-                        <div class="row bg-light p-3 rounded">
-                            <p class="text-primary col-5">First Name:</p> <p class="col-7">Kebebush</p>
-                            <p class="text-primary col-5">Last Name:</p> <p class="col-7">G/Michael</p>
-                            <p class="text-primary col-5">UserName:</p> <p class="col-7">HCHS1234</p>
-                            <p class="text-primary col-5">Gender:</p> <p class="col-7">Female</p>
-                        </div></div>
-                </div>
-               
-            </div>
-        </div>
+    <div className="container-fluid">
+      <div className="row ms-lg-6 ms-3 g-3 "> {/* Added g-3 for consistent gutters */}
+        {/* Left Column - Student Info */}
         <div className="col-lg-6">
-        <Studentgraph/>
+        
+
+            <RegData/>
+
+          {/* Enhanced Department Cards */}
+          <div className="row mt-4">
+            
+
+          <div className="col-11 mb-3">
+              <div className="card shadow-sm border-0" style={{
+                background: "linear-gradient(to right, #f8f9fa, #ffffff)",
+                borderRadius: "12px"
+              }}>
+                <div className="card-body p-3">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 className="mb-0 fw-bold text-secondary">Mechanical Engineering</h6>
+                      <small className="text-muted">Number of Students</small>
+                    </div>
+                    <span className="fs-2 fw-bold text-primary">100</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-11 mb-3">
+              <div className="card shadow-sm border-0" style={{
+                background: "linear-gradient(to right, #f8f9fa, #ffffff)",
+                borderRadius: "12px"
+              }}>
+                <div className="card-body p-3">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 className="mb-0 fw-bold text-secondary">Mechanical Engineering</h6>
+                      <small className="text-muted">Number of Students</small>
+                    </div>
+                    <span className="fs-2 fw-bold text-primary">100</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="col-11 mb-3">
+              <div className="card shadow-sm border-0" style={{
+                background: "linear-gradient(to right, #f8f9fa, #ffffff)",
+                borderRadius: "12px"
+              }}>
+                <div className="card-body p-3">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 className="mb-0 fw-bold text-secondary">Mechanical Engineering</h6>
+                      <small className="text-muted">Number of Students</small>
+                    </div>
+                    <span className="fs-2 fw-bold text-primary">100</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* Right Column - Student Graph */}
+        <div className="col-lg-6 mt-5 mb-3">
+      
+              <Studentgraph />
+            
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default RMain
+export default RMain;

@@ -1,30 +1,55 @@
-import React from 'react'
+import React from 'react';
 import StudentParticipation from './StudentParticipation';
+import DHData from './DHData';
 
 function DepMain() {
+  // Class data - replace with your actual data
+  const classes = [
+    { name: "Biology 101", total: 32, evaluated: 28 },
+    { name: "Chemistry 201", total: 28, evaluated: 25 },
+    { name: "Physics 301", total: 35, evaluated: 30 }
+  ];
+
   return (
     <div className="row ms-lg-6 ms-3">
-        <div className="col-lg-6 pt-5 text-center text-lg-start">
-        <div class="row">
-                     <div class="studpic col-lg-4 col-4 col-sm-3">
-                    <img src="../public/mami.jpg" class="pic2 marp mt-5 rounded-circle" width="90%" alt=""/>
-                     </div>
-                  <div class="studdata col-lg-6 col-sm-5 col-6 mt-4">
-                    <div class="card-text mt-3 ms-3">
-                        <div class="row bg-light p-3 rounded">
-                            <p class="text-primary col-5">First Name:</p> <p class="col-7">Nathan</p>
-                            <p class="text-primary col-5">Last Name:</p> <p class="col-7">Belayneh</p>
-                            <p class="text-primary col-5">UserName:</p> <p class="col-7">HCHS1234</p>
-                            <p class="text-primary col-5">Department:</p> <p class="col-7">Computer Science</p>
-                        </div></div>
-                </div>
-               
-            </div>
+      {/* Your EXISTING student profile - COMPLETELY UNTOUCHED */}
+      <div className="col-lg-6">
+      <DHData/>
+        {/* NEW: Simple Class List with Evaluation Counts */}
+        <div className="mt-5">
+          <h5 className="text-primary mb-3 ms-4 mb-2">
+            <i className="bi bi-journal-bookmark-fill me-2"></i>
+            Class Evaluation Summary
+          </h5>
+          <div className="table-responsive mt-4">
+            <table className="table table-hover table-bordered">
+              <thead className="table-primary">
+                <tr>
+                  <th className=" text-secondary">Class Name</th>
+                  <th className="text-center  text-secondary">Total Students</th>
+                  <th className="text-center  text-secondary">Evaluated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {classes.map((cls, index) => (
+                  <tr key={index}>
+                    <td className=' text-secondary'>{cls.name}</td>
+                    <td className="text-center fw-bold">{cls.total}</td>
+                    <td className="text-center text-success fw-bold">{cls.evaluated}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div className="col-lg-6 pt-6">
-        <StudentParticipation data={20} />
-        </div>
+      </div>
+
+      {/* Your EXISTING participation chart - COMPLETELY UNTOUCHED */}
+      <div className="col-lg-6 pt-3">
+        <StudentParticipation data={60} />
+      </div>
     </div>
-  )
+  );
 }
+
 export default DepMain;

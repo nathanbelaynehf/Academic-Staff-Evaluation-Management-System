@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +41,18 @@ public class CourseService {
         return departmentCourses.stream()
                 .map(DepartmentCourse::getCourse)
                 .collect(Collectors.toList());
+    }
+    public Course getCourseById(Long id) {
+        Optional<Course> course = courseRepo.findById(id);
+        return course.orElse(null);
+    }
+
+    public void deleteCourse(Long id) {
+        // First delete all department-course associations
+        DepartmentCourse departmentCourses = deptCourseRepo.findByCourseId(id);
+        deptCourseRepo.delete(departmentCourses);
+        // Then delete the course itself
+        courseRepo.deleteById(id);
     }
 
 }

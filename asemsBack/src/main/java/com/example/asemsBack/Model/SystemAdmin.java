@@ -1,6 +1,7 @@
 package com.example.asemsBack.Model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,23 +27,27 @@ public class SystemAdmin {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     @JsonBackReference(value = "user-systemAdmin")
+    @JsonIgnore
     private Users user;
 
     @OneToOne(mappedBy = "systemAdmin", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Registrar registrar;
 
     @OneToMany(mappedBy = "systemAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "teacher-systemAdmin")
+    @JsonIgnore
     private Set<Teacher> teachers = new HashSet<>();
 
     @OneToMany(mappedBy = "systemAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Student> students = new HashSet<>();
 
     @OneToMany(mappedBy = "systemAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference(value = "dh-sysadm")
+    @JsonIgnore
     private Set<DepartmentHead> departmentHeads = new HashSet<>();
 
     @OneToOne(mappedBy = "systemAdmin", cascade = CascadeType.ALL)
+    @JsonIgnore
     private AcademicDean academicDean;
 
 }

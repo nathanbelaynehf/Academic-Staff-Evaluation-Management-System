@@ -28,14 +28,18 @@ export default function Instructors({ setSelectedTeacher }) {
 
   return (
     <>
+    <div className="container-xl">
+    <h3 class="text-center text-primary fw-bold mb-4 py-3 bg-light border rounded shadow-sm">
+      List of Instructors
+</h3>
       {teachers.length > 0 ? (
         teachers.map((teacher, index) => (
           <div
             key={index}
-            className="row border rounded shadow-sm p-3 ms-3 me-3 mt-4"
+            className="row border rounded shadow-sm p-3 ms-3 me-3 mt-2 mb-3"
           >
             <div className="col-8">
-              <h3>{teacher.username}</h3> {/* Adjust key name based on API response */}
+              <h3 className='text-secondary fs-4'>{teacher.fname} {teacher.lname}</h3> {/* Adjust key name based on API response */}
             </div>
             <div className="col-4 d-flex justify-content-end">
               <button 
@@ -50,6 +54,7 @@ export default function Instructors({ setSelectedTeacher }) {
       ) : (
         <p className="text-center mt-3">No instructors found.</p>
       )}
+      </div>
     </>
   );
 }

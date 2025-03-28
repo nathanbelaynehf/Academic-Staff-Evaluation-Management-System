@@ -9,6 +9,9 @@ function RegisterAdmin() {
    <>
    <AdmNav/>
    <div className="row">
+   <h3 class="text-center text-primary fw-bold mb-4 py-3 bg-light border rounded shadow-sm">
+      Account Creation
+</h3>
     <div className="col-12 col-lg-6">
         <RegDH/>
     </div>

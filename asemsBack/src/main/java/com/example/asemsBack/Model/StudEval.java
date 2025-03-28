@@ -21,7 +21,7 @@ public class StudEval {
 
     @ManyToOne
     @JoinColumn(name = "criteria_id", nullable = false)
-    @JsonBackReference("criteria-studEval")
+    @JsonIgnore
     private Criteria studCriteria;
 
     @OneToOne
@@ -29,14 +29,14 @@ public class StudEval {
     @JsonIgnore // Prevents infinite recursion
     private Evaluation evaluation;
 
-    @OneToMany(mappedBy = "studEval", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ReportEvaluation> reportEvaluations = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
+    @JsonIgnore
     private Student student;
 
     @ManyToOne
     @JoinColumn(name = "teacherCourse_id", nullable = false)
+    @JsonIgnore
     private TeacherCourse teacherCourse;
 }

@@ -29,52 +29,70 @@ const AddDepartment = () => {
     return (
         <>
      
-        <div className="container mt-4">
-      <h2 className="text-center mb-4">Departments</h2>
-      <div className="accordion" id="departmentsAccordion">
-        {departments.map((dept, index) => (
-          <div key={dept.id} className="accordion-item">
-            {/* Accordion Header */}
-            <h2 className="accordion-header" id={`heading${index}`}>
-              <button
-                className={`accordion-button ${activeIndex === index ? "" : "collapsed"}`}
-                type="button"
-                onClick={() => toggleAccordion(index)}
-                data-bs-toggle="collapse"
-                data-bs-target={`#collapse${index}`}
-                aria-expanded={activeIndex === index}
-                aria-controls={`collapse${index}`}
-              >
-                <strong>{dept.departmentName}</strong> 
-                <span className="ms-2 text-muted">(Total Years: {dept.totalYear})</span>
-              </button>
-            </h2>
-
-            {/* Accordion Body */}
-            <div
-              id={`collapse${index}`}
-              className={`accordion-collapse collapse ${activeIndex === index ? "show" : ""}`}
-              aria-labelledby={`heading${index}`}
-              data-bs-parent="#departmentsAccordion"
-            >
-              <div className="accordion-body">
-                <h6 className="fw-bold">Teachers:</h6>
-                {dept.teachers.length > 0 ? (
-                  <ul className="list-group">
-                    {dept.teachers.map((teacher, i) => (
-                      <li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-                       {teacher.username}  <i className="bi bi-person-circle me-2"></i>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-muted">No teachers available</p>
-                )}
-              </div>
-            </div>
+        <div className="container mt-3">
+        <h3 class="text-center text-primary fw-bold mb-4 py-3 bg-light border rounded shadow-sm">
+        Departments
+</h3>
+<div className="accordion" id="departmentsAccordion">
+  {departments.map((dept, index) => (
+    <div key={dept.id} className="accordion-item mb-3 border rounded shadow-sm">
+      {/* Accordion Header */}
+      <h2 className="accordion-header" id={`heading${index}`}>
+        <button
+          className={`accordion-button ${activeIndex === index ? "" : "collapsed"} d-flex justify-content-between align-items-center p-3`}
+          type="button"
+          onClick={() => toggleAccordion(index)}
+          data-bs-toggle="collapse"
+          data-bs-target={`#collapse${index}`}
+          aria-expanded={activeIndex === index}
+          aria-controls={`collapse${index}`}
+        >
+          <div>
+            <strong className="fs-5 text-secondary">{dept.departmentName}</strong>
+            <span className="ms-2 text-muted fs-6">(Total Years: {dept.totalYear})</span>
           </div>
-        ))}
+
+        </button>
+      </h2>
+
+      {/* Accordion Body */}
+      <div
+        id={`collapse${index}`}
+        className={`accordion-collapse collapse ${activeIndex === index ? "show" : ""}`}
+        aria-labelledby={`heading${index}`}
+        data-bs-parent="#departmentsAccordion"
+      >
+        <div className="accordion-body p-3">
+          <h6 className="fw-bold mb-3 text-primary text-center">
+            <i className="bi bi-people-fill me-2"></i>
+            Teachers
+          </h6>
+          {dept.teachers.length > 0 ? (
+            <div className="list-group">
+              {dept.teachers.map((teacher, i) => (
+                <div
+                  key={i}
+                  className="list-group-item d-flex justify-content-between align-items-center p-2 mb-2 border rounded shadow-sm"
+                >
+                  <span className="fw-medium">
+                    <i className="bi bi-person-circle me-2"></i>
+                    {teacher.fname} {teacher.lname}
+                  </span>
+                  <span className="badge bg-primary rounded-pill">UserName: {teacher.username}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-muted fst-italic">
+              <i className="bi bi-exclamation-circle me-2"></i>
+              No teachers available
+            </p>
+          )}
+        </div>
       </div>
+    </div>
+  ))}
+</div>
     </div>
 
 

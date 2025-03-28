@@ -56,24 +56,19 @@ function AdmNav() {
               </Link>
             </li>
             <li className="nav-item text-center pe-lg-6 ms-auto">
-              <a href="#about" className="nav-link fw-semibold">
-                Evaluation
-              </a>
-            </li>
-            <li className="nav-item text-center pe-lg-6 ms-auto">
               <Link to="/admin/reg" className="nav-link fw-semibold">
                 Register&nbsp;
               </Link>
             </li>
             <li className="nav-item text-center pe-lg-5 ms-auto">
-              <a href="#contact" className="nav-link fw-semibold">
+              <Link to="/admin/system" className="nav-link fw-semibold">
                 System&nbsp;
-              </a>
+              </Link>
             </li>
             <li className="nav-item text-center pe-lg-5 ms-auto">
-              <a href="#contact" className="nav-link fw-semibold">
+              <Link to="/admin/accounts" className="nav-link fw-semibold">
                 Accounts&nbsp;
-              </a>
+              </Link>
             </li>
             <li className="nav-item text-center pe-lg-5 ms-auto">
               <a href="#contact" className="nav-link fw-semibold">

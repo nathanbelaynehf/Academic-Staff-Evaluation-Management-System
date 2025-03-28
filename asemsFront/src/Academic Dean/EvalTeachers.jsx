@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 function EvalTeachers({ setSelectedTeacher }) {
 
     const [instructors, setInstructors] = useState([]);
+    console.log(instructors);
 
     useEffect(() => {
         fetchInstructors();
@@ -21,16 +22,18 @@ function EvalTeachers({ setSelectedTeacher }) {
 
   return (
     <>
-
-    <h1 className='text-center'>List of All Instructors</h1>
+    <div className="container">
+      <h3 class="text-center text-primary fw-bold mb-4 py-3 bg-light border rounded shadow-sm">
+      List of All Instructors
+</h3>
      {instructors.length > 0 ? (
         instructors.map((teacher, index) => (
           <div
             key={index}
-            className="row border rounded shadow-sm p-3 ms-3 me-3 mt-4 mb-3"
+            className="row border rounded shadow-sm p-3 mt-4 mb-3"
           >
             <div className="col-8">
-              <h3>{teacher.username}</h3> {/* Adjust key name based on API response */}
+              <span className='text-secondary fs-4'>{teacher.fname} {teacher.lname}</span> {/* Adjust key name based on API response */}
             </div>
             <div className="col-4 d-flex justify-content-end">
               <button 
@@ -44,6 +47,7 @@ function EvalTeachers({ setSelectedTeacher }) {
       ) : (
         <p className="text-center mt-3">No instructors found.</p>
       )}
+      </div>
     </>
   )
 }

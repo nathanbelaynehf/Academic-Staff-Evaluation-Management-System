@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "evalid"
@@ -20,11 +22,12 @@ public class AcademicDeanEval {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    private int round;
+
     @OneToOne
     @JoinColumn(name = "eval_id", referencedColumnName = "evalid", unique = true)
     @JsonIgnore // Prevents infinite recursion
     private Evaluation evaluation;
-
 
     @ManyToOne
     @JoinColumn(name = "teacher_id", nullable = false)
@@ -35,4 +38,5 @@ public class AcademicDeanEval {
     @JoinColumn(name = "academicDean_id", nullable = false)
     @JsonIgnore
     private AcademicDean academicDean;
+
 }

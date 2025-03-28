@@ -1,13 +1,12 @@
 package com.example.asemsBack.Service;
 
-import com.example.asemsBack.Control.TeacherCourseDTO;
+import com.example.asemsBack.Dto.TeacherCourseDTO;
 import com.example.asemsBack.Model.*;
 import com.example.asemsBack.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 

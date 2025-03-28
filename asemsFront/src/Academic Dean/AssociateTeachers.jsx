@@ -106,13 +106,13 @@ const AssociateTeachers = () => {
   };
 
   return (
-    <div className="row">
+    <div className="row container">
     <div className="col-5">
     <div className="container mt-6 ms-3 mb-5">
-            <h2>Add Department</h2>
+            <h3 className='text-secondary'>Add Department</h3>
             <form onSubmit={handleSubmitw}>
                 <div className="mb-3">
-                    <label className="form-label">Department Name</label>
+                    <label className="form-label">Department Name:</label>
                     <input
                         type="text"
                         className="form-control w-75"
@@ -122,7 +122,7 @@ const AssociateTeachers = () => {
                     />
                 </div>
                 <div className="mb-3">
-                    <label className="form-label">Total Year</label>
+                    <label className="form-label">Total Year:</label>
                     <input
                         type="number"
                         className="form-control w-75"
@@ -137,10 +137,10 @@ const AssociateTeachers = () => {
         </div>
         <div className="col-7">
         <div className='container mt-6'>
-      <h1>Associate Teachers with Departments</h1>
+      <h3 className='text-secondary'>Assign Department to teachers</h3>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="department">Department:</label>
+        <div className='mb-3'>
+          <label htmlFor=" mb-3">Department:</label>
           <select className='form-control mt-2' id="department" value={selectedDepartment} onChange={handleDepartmentChange}>
             <option value="">Select a department</option>
             {departments.map(dept => (
@@ -149,11 +149,11 @@ const AssociateTeachers = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="instructor">Instructor:</label>
+          <label  htmlFor="instructor mb-3 mt-3">Instructor:</label>
           <select className='form-control mt-2' id="instructor" value={selectedInstructor} onChange={handleInstructorChange}>
             <option value="">Select an instructor</option>
             {instructors.map(instructor => (
-              <option key={instructor.id} value={instructor.id}>{instructor.username}</option>
+              <option key={instructor.id} value={instructor.id}>{instructor.fname} {instructor.lname}</option>
             ))}
           </select>
         </div>

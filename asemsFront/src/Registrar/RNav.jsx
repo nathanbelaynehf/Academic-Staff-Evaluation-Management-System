@@ -61,13 +61,18 @@ function RNav() {
               </Link>
             </li>
             <li className="nav-item text-center pe-lg-6 ms-auto">
-              <a href="#service" className="nav-link fw-semibold">
+              <Link to="/reg/account" className="nav-link fw-semibold">
                 Update&nbsp;
-              </a>
+              </Link>
             </li>
             <li className="nav-item text-center pe-lg-5 ms-auto">
               <Link to="/reg/course" className="nav-link fw-semibold">
                 Course&nbsp;
+              </Link>
+            </li>
+            <li className="nav-item text-center pe-lg-5 ms-auto">
+              <Link to="/reg/course" className="nav-link fw-semibold">
+                Semester&nbsp;
               </Link>
             </li>
           </ul>

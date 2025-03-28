@@ -1,7 +1,7 @@
 import React , { useState } from 'react'
 import RNav from './RNav'
 import List from './List'
-import EnrollmentModal from '../Department Head/EnrollmentModal';
+import EnrollmentModal from './EnrollmentModal';
 
 function Course() {
   const [selectedStudent, setSelectedStudent] = useState([]);  

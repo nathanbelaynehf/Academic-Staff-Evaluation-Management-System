@@ -1,6 +1,6 @@
 package com.example.asemsBack.Service;
 
-import com.example.asemsBack.Control.EvaluationSubmissionDTO;
+import com.example.asemsBack.Dto.EvaluationSubmissionDTO;
 import com.example.asemsBack.Model.*;
 import com.example.asemsBack.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -56,9 +57,13 @@ public class DeptEvalService {
     public int getActiveRound(Semester semester) {
         Date currentDate = new Date(System.currentTimeMillis());
 
-        if (currentDate.after(semester.getStartof1stRoundEval()) && currentDate.before(semester.getEndof1stRoundEval())) {
+        // Check if the current date is within the first round (inclusive)
+        if (!currentDate.before(semester.getStartof1stRoundEval()) && !currentDate.after(semester.getStartof2ndRoundEval())) {
             return 1; // First round is active
-        } else if (currentDate.after(semester.getStartof2ndRoundEval()) && currentDate.before(semester.getEndof2ndRoundEval())) {
+        }
+
+        // Check if the current date is within the second round (inclusive)
+        if (!currentDate.before(semester.getStartof2ndRoundEval()) && !currentDate.after(semester.getEndDate())) {
             return 2; // Second round is active
         }
 
@@ -82,7 +87,7 @@ public class DeptEvalService {
 
         for (EvaluationSubmissionDTO evalReq : evaluationRequests) {
             try {
-                int score = evalReq.getScore();
+                BigDecimal score = evalReq.getScore();
                 long criteriaId = evalReq.getId();
                 String remark = evalReq.getRemark();
                 long teacherId= evalReq.getTeacherId();

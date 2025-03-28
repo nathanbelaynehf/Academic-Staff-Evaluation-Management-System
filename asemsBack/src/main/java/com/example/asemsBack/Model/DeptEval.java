@@ -18,7 +18,7 @@ public class DeptEval {
 
     @ManyToOne
     @JoinColumn(name = "criteria_id", nullable = false)
-    @JsonBackReference("criteria-deptEval") // ✅ Matches Criteria
+    @JsonIgnore // ✅ Matches Criteria
     private Criteria deptCriteria;
 
 
@@ -29,11 +29,11 @@ public class DeptEval {
 
     @ManyToOne
     @JoinColumn(name = "departmentHead_id", nullable = false)
-    @JsonBackReference(value = "dh-dpev")
+    @JsonIgnore
     private DepartmentHead departmentHead;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id", nullable = false)
-    @JsonBackReference(value = "teacher-deptEvals")
+    @JsonIgnore
     private Teacher teacher;
 }

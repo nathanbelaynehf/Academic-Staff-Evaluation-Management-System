@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "evalid"
@@ -20,8 +22,13 @@ public class Evaluation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long evalid;
 
-    private int score;
+    @Column(name = "score", precision = 5, scale = 2) // DECIMAL(5,2)
+    private BigDecimal score;
+
+    @Lob
+    @Column(length = 10000) // Adjust length based on your needs
     private String remark;
+
 
 
     @OneToOne(mappedBy = "evaluation")
@@ -35,6 +42,10 @@ public class Evaluation {
     @OneToOne(mappedBy = "evaluation")
     @JsonIgnore
     private StudEval studEval;
+
+    @OneToOne(mappedBy = "evaluation")
+    @JsonIgnore
+    private StudReportEval studReportEval;
 
 
     @ManyToOne

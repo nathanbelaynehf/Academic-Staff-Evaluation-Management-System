@@ -1,5 +1,6 @@
 package com.example.asemsBack.Repository;
 
+import com.example.asemsBack.Model.Teacher;
 import com.example.asemsBack.Model.TeacherCourse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,7 @@ public interface TeacherCourseRepo extends JpaRepository<TeacherCourse,Long> {
     List<TeacherCourse> findByClassIdAndActiveSemester(@Param("classId") Long classId);
 
 
+    List<TeacherCourse> findByTeacherUserUsername(String username);
+
+    List<TeacherCourse> findByTeacher(Teacher teacher);
 }

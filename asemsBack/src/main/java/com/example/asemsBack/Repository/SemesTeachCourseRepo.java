@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SemesTeachCourseRepo extends JpaRepository<SemesterTeacherCourse,Long> {
 
+    void deleteByTeacherCourseId(long id);
 }

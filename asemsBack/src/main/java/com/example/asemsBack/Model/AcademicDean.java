@@ -12,7 +12,7 @@ import java.util.Set;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "evalid"
+        property = "id"
 )
 @Entity
 @Getter
@@ -29,11 +29,12 @@ public class AcademicDean {
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
-    @JsonBackReference(value = "user-academicDean")
+    @JsonIgnore
     private Users user;
 
     @OneToOne
     @JoinColumn(name = "admin_id", referencedColumnName = "id", unique = true)
+    @JsonIgnore
     private SystemAdmin systemAdmin;
 
     @OneToMany(mappedBy = "academicDean", cascade = CascadeType.ALL, orphanRemoval = true)

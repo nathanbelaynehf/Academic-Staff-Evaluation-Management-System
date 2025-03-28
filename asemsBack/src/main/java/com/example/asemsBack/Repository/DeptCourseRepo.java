@@ -10,4 +10,5 @@ import java.util.List;
 public interface DeptCourseRepo extends JpaRepository<DepartmentCourse,Long> {
     public List<DepartmentCourse> findByDepartmentId(long departmentId);
 
+    DepartmentCourse findByCourseId(Long id);
 }

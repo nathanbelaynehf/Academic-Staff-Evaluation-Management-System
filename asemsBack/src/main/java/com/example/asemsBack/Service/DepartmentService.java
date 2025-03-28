@@ -1,7 +1,7 @@
 package com.example.asemsBack.Service;
 
-import com.example.asemsBack.Control.DepartmentDto;
-import com.example.asemsBack.Control.Mapper;
+import com.example.asemsBack.Dto.DepartmentDto;
+import com.example.asemsBack.Dto.Mapper;
 import com.example.asemsBack.Model.Department;
 import com.example.asemsBack.Repository.DepartmentRepo;
 import org.springframework.beans.factory.annotation.Autowired;

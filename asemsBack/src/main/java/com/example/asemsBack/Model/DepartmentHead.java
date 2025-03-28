@@ -1,5 +1,6 @@
 package com.example.asemsBack.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -44,7 +45,7 @@ public class DepartmentHead {
 
     @OneToOne
     @JoinColumn(name = "department_id", referencedColumnName = "id", unique = true)
-    @JsonIgnore // Prevents infinite recursion
+    @JsonIgnore
     private Department department;
 
     @OneToMany(mappedBy = "departmentHead", cascade = CascadeType.ALL, orphanRemoval = true)

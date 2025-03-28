@@ -1,6 +1,6 @@
 package com.example.asemsBack.Service;
 
-import com.example.asemsBack.Control.StudentDTO;
+import com.example.asemsBack.Dto.StudentDTO;
 import com.example.asemsBack.Model.*;
 import com.example.asemsBack.Repository.EnrollRepo;
 import com.example.asemsBack.Repository.StudRepo;
@@ -9,8 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,8 +42,10 @@ public class StudentService {
                     Course course = teacherCourse.getCourse();
                     String teacherUsername = teacherCourse.getTeacher().getUser().getUsername();
                     long teacherCourseId= teacherCourse.getId();
+                    String fname=teacherCourse.getTeacher().getUser().getFname();
+                    String lname=teacherCourse.getTeacher().getUser().getLname();
 
-                    return new EnrollmentResponse(teacherUsername, course.getCourseName(),teacherCourseId);
+                    return new EnrollmentResponse(teacherUsername, course.getCourseName(),teacherCourseId,fname,lname);
                 })
                 .collect(Collectors.toList());
     }
@@ -71,7 +71,9 @@ public class StudentService {
                     // Assuming each Student has a relationship to User
                     String username = student.getUser() != null ? student.getUser().getUsername() : null;
                     long id=student.getId();
-                    return new StudentDTO(username,id);
+                    String fname=student.getUser().getFname();
+                    String lname=student.getUser().getLname();
+                    return new StudentDTO(id,username,fname,lname);
                 })
                 .collect(Collectors.toList());
     }
@@ -80,11 +82,15 @@ public class StudentService {
         private String teacherUsername;
         private String courseName;
         private long teacherCourseId;
+        private String fname;
+        private String lname;
 
-        public EnrollmentResponse(String teacherUsername, String courseName, long teacherCourseId) {
+        public EnrollmentResponse(String teacherUsername, String courseName, long teacherCourseId,String fname,String lname) {
             this.teacherUsername = teacherUsername;
             this.courseName = courseName;
             this.teacherCourseId=teacherCourseId;
+            this.fname=fname;
+            this.lname=lname;
         }
 
         public String getTeacherUsername() {
@@ -96,6 +102,14 @@ public class StudentService {
         }
         public long getTeacherCourseId() {
             return teacherCourseId;
+        }
+
+        public String getFname() {
+            return fname;
+        }
+
+        public String getLname() {
+            return lname;
         }
     }
 }

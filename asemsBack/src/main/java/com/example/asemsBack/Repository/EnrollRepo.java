@@ -17,4 +17,7 @@ public interface EnrollRepo extends JpaRepository<Enrollement,Long> {
             "JOIN es.semester s " + // Join Semester
             "WHERE e.student.id = :studentId AND s.isActive = true")
     List<Enrollement> findByStudentIdAndActiveSemester(@Param("studentId") long studentId);
-    Enrollement findByStudent_IdAndTeacherCourse_Id(Long studentId, Long teacherCourseId);}
+    Enrollement findByStudent_IdAndTeacherCourse_Id(Long studentId, Long teacherCourseId);
+
+    List<Enrollement> findByStudentId(Long studentId);
+}

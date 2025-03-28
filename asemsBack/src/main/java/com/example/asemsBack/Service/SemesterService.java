@@ -3,16 +3,20 @@ package com.example.asemsBack.Service;
 import com.example.asemsBack.Model.Semester;
 import com.example.asemsBack.Repository.SemesterRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class SemesterService {
+
      @Autowired
      SemesterRepo semesterRepo;
 
+    @Scheduled(cron = "0 0 0 * * ?")
     public void updateSemesterStatus() {
         Date currentDate = new Date(System.currentTimeMillis()); // Get the current date
 

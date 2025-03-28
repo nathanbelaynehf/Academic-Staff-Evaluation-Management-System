@@ -33,14 +33,15 @@ public class ApplicationSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-//                                .requestMatchers("/public/**").permitAll()
-                                .requestMatchers("/admin").hasRole("ADMIN")
-                                .requestMatchers("/ad").hasRole("AD")
-                                .requestMatchers("/dh").hasRole("DH")
-                                .requestMatchers("/reg").hasRole("REG")
-                                .requestMatchers("/stud").hasRole("STUDENT")
+                                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers("/ad/**").hasAuthority("ROLE_AD")
+                                .requestMatchers("/dh/**").hasAuthority("ROLE_DH")
+                                .requestMatchers("/reg/**").hasAuthority("ROLE_REG")
+                                .requestMatchers("/stud/**").hasAuthority("ROLE_STUDENT")
+                                .requestMatchers("/teach/**").hasAuthority("ROLE_TEACHER")
                                 .anyRequest().authenticated()
                 )
+
                 .formLogin(form -> form
                         .loginPage("/")
                        .successHandler(authenticationSuccessHandler())

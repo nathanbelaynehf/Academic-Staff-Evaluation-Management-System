@@ -1,5 +1,6 @@
 package com.example.asemsBack.Service;
 
+import com.example.asemsBack.Dto.TeacherDto;
 import com.example.asemsBack.Model.Teacher;
 import com.example.asemsBack.Model.Users;
 import com.example.asemsBack.Repository.TeacherRepo;
@@ -18,9 +19,8 @@ public class TeacherService {
     @Autowired
     private TeacherRepo teacherRepo;
 
-    public List<Teacher> getAllTeachers() {
-        System.out.println(teacherRepo.findAllWithUser());
-        return  teacherRepo.findAllWithUser();
+    public List<TeacherDto> getAllTeachers() {
+        return teacherRepo.findAllWithUserDTO();
     }
 
     public void registerTeacher(Users user, String qualification, String specialization, int yearsOfExperience) {
@@ -31,5 +31,9 @@ public class TeacherService {
         teacher.setSpecialization(specialization);
         teacher.setYearsOfExperience(yearsOfExperience);
         teacherRepo.save(teacher);
+    }
+
+    public List<TeacherDto> searchTeachersByUsername(String username) {
+        return teacherRepo.findByUserUsernameContaining(username);
     }
 }

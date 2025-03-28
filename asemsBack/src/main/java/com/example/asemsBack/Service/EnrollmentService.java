@@ -1,6 +1,6 @@
 package com.example.asemsBack.Service;
 
-import com.example.asemsBack.Control.EnrollementDTO;
+import com.example.asemsBack.Dto.EnrollementDTO;
 import com.example.asemsBack.Model.Enrollement;
 import com.example.asemsBack.Repository.EnrollRepo;
 import org.springframework.beans.factory.annotation.Autowired;

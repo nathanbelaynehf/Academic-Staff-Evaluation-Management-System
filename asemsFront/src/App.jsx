@@ -6,6 +6,8 @@ import DhRoutes from './Department Head/DhRoutes';
 import RegistrarRoutes from './Registrar/RegistrarRoutes';
 import StudentRoutes from './Student/StudentRoutes';
 import HomeRoutes from './HomePage/HomeRoutes';
+import TeacherRoutes from './Teacher/TeacherRoutes';
+import { AuthProvider } from './AuthContext';
 
 
 const routers=createBrowserRouter([
@@ -15,12 +17,15 @@ const routers=createBrowserRouter([
     ...RegistrarRoutes,
     ...StudentRoutes,
     ...adminRoutes,
+    ...TeacherRoutes,
 ]);
 function App() {
   return (
+    <AuthProvider>
     <RouterProvider 
     router={routers}
     />
+    </AuthProvider>
   )
 }
 

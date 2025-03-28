@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 function CriteriaEval({ selectedTeacher }) {
   const [criteria, setCriteria] = useState([]);
   const [evaluations, setEvaluations] = useState({});
+  const [activeRound, setActiveRound] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8082/stud/criteria", { credentials: "include" })
@@ -16,23 +17,60 @@ function CriteriaEval({ selectedTeacher }) {
         setEvaluations(initialEvaluations);
       })
       .catch((error) => console.error("Error fetching criteria:", error));
+
+    const fetchActiveRound = async () => {
+      try {
+        const response = await fetch("http://localhost:8082/stud/round", {
+          credentials: "include", // Include credentials (cookies)
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch active round");
+        }
+        const round = await response.json();
+        setActiveRound(round);
+      } catch (error) {
+        console.error("Error fetching active round:", error);
+      }
+    };
+
+    fetchActiveRound();
   }, []);
+
+  const getOptions = () => {
+    switch (activeRound) {
+      case 1: // First round
+        return [
+          { value: "1", label: "Low" },
+          { value: "2", label: "Medium" },
+          { value: "3", label: "High" },
+          { value: "4", label: "Very High" },
+        ];
+      case 2: // Second round
+        return [
+          { value: "0.4", label: "Very Low" },
+          { value: "0.8", label: "Low" },
+          { value: "1.2", label: "Medium" },
+          { value: "1.6", label: "High" },
+          { value: "2", label: "Very High" },
+        ];
+      default: // No active round or invalid round
+        return [];
+    }
+  };
 
   const handleChange = (id, field, value) => {
     setEvaluations((prev) => ({
       ...prev,
       [id]: { ...prev[id], [field]: value },
-      teacherId: selectedTeacher?.id
+      teacherId: selectedTeacher?.id,
     }));
   };
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     console.log("Evaluations:", evaluations);
-  
+
     const evaluationData = Object.keys(evaluations)
       .map((id) => {
         const evaluation = evaluations[id];
@@ -42,15 +80,15 @@ function CriteriaEval({ selectedTeacher }) {
         }
         return {
           id: parseInt(id), // Ensure the ID is a number
-          score: parseInt(evaluation.score), // Ensure the score is a number
+          score: parseFloat(evaluation.score), // Use parseFloat to preserve decimal values
           remark: evaluation.remark,
           teacherId: selectedTeacher.teacherCourseId,
         };
       })
-      .filter(Boolean); // Filter out null entriesnpm run dev
-  
+      .filter(Boolean); // Filter out null entries
+
     console.log("Evaluation Data:", evaluationData);
-  
+
     try {
       const response = await fetch("http://localhost:8082/stud/evalsubmit", {
         method: "POST",
@@ -58,9 +96,10 @@ function CriteriaEval({ selectedTeacher }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(evaluationData),
       });
-  
+
       if (response.ok) {
         alert("Evaluation submitted successfully!");
+        console.log(evaluationData);
       } else {
         const errorData = await response.json();
         alert("Failed to submit evaluation: " + errorData);
@@ -71,7 +110,6 @@ function CriteriaEval({ selectedTeacher }) {
     }
   };
 
-//   
   return (
     <>
       <div className="modal fade" id="evalInst" tabIndex="-1">
@@ -80,7 +118,8 @@ function CriteriaEval({ selectedTeacher }) {
             {/* Modal Header */}
             <div className="modal-header">
               <h5 className="modal-title text-secondary">
-              Evaluate {selectedTeacher ? selectedTeacher.teacherUsername : "Instructor"}</h5>
+                Evaluate {selectedTeacher ? selectedTeacher.teacherUsername : "Instructor"}
+              </h5>
               <button className="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -89,19 +128,26 @@ function CriteriaEval({ selectedTeacher }) {
               <form onSubmit={handleSubmit}>
                 {criteria.map((criterion) => (
                   <div key={criterion.id} className="mb-4 row">
-                    <label className="col-8 col-form-label">
+                    <label className="col-7 col-form-label">
                       {criterion.name}
                     </label>
-                    <div className="col-1">
-                      <input
-                        type="number"
-                        min="1"
-                        max="5"
+                    <div className="col-2">
+                      <select
+                        id={`score-${criterion.id}`}
                         value={evaluations[criterion.id]?.score || ""}
                         onChange={(e) => handleChange(criterion.id, "score", e.target.value)}
                         required
                         className="form-control"
-                      />
+                      >
+                        <option value="" disabled>
+                          Score
+                        </option>
+                        {getOptions().map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="col-3">
                       <input
@@ -112,15 +158,8 @@ function CriteriaEval({ selectedTeacher }) {
                         onChange={(e) => handleChange(criterion.id, "remark", e.target.value)}
                       />
                     </div>
-                     {/* <input
-                        type="hidden"
-                        placeholder="Remark"
-                        className="form-control"
-                        value={evaluations[criterion.id]?.teacherId || ""}
-                        onChange={(e) => handleChange(criterion.id, "teacherId", selectedTeacher.id)}
-                      /> */}
-                 </div> 
-               ))} 
+                  </div>
+                ))}
 
                 {/* Submit Button */}
                 <div className="text-center">

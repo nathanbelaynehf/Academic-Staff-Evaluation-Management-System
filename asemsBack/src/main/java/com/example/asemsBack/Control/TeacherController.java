@@ -17,10 +17,10 @@ public class TeacherController {
     @Autowired
     private TeacherService teacherService;
 
-    @GetMapping("/teacher")
-    public List<Teacher> getInstructor(){
-        List<Teacher> TeachersList=teacherService.getAllTeachers();
-        return TeachersList;
-    }
+//    @GetMapping("/teacher")
+//    public List<Teacher> getInstructor(){
+//        List<Teacher> TeachersList=teacherService.getAllTeachers();
+//        return TeachersList;
+//    }
 
 }

@@ -19,6 +19,6 @@ public class ReportEvaluation {
     private Report report;
 
     @ManyToOne
-    @JoinColumn(name = "studEval_id", nullable = false)
-    private StudEval studEval;
+    @JoinColumn(name = "studRepEval_id", nullable = false)
+    private StudReportEval studReportEval;
 }

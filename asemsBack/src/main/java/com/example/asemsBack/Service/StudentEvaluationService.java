@@ -1,15 +1,16 @@
 package com.example.asemsBack.Service;
 
-import com.example.asemsBack.Control.EvaluationSubmissionDTO;
+import com.example.asemsBack.Dto.EvaluationSubmissionDTO;
 import com.example.asemsBack.Model.*;
 import com.example.asemsBack.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 public class StudentEvaluationService {
@@ -61,57 +62,82 @@ public class StudentEvaluationService {
     }
 
 
-
+    @Transactional
     public ResponseEntity<?> submitEvaluations(List<EvaluationSubmissionDTO> evaluationRequests, String username) {
-        Student student=getStudentByUsername(username);
+        Student student = getStudentByUsername(username);
+        System.out.println("Received evaluations: " + evaluationRequests.size());
+
+        List<String> errors = new ArrayList<>();
 
         for (EvaluationSubmissionDTO evalReq : evaluationRequests) {
             try {
-                int score = evalReq.getScore();
+                System.out.println("Processing evaluation: " + evalReq);
+
+                // Validate data
+//                if (evalReq.getScore() == null || evalReq.getId() == null || evalReq.getRemark() == null || evalReq.getTeacherId() == null) {
+//                    errors.add("Invalid data for evaluation: " + evalReq);
+//                    continue;
+//                }
+
+                BigDecimal score = evalReq.getScore();
                 long criteriaId = evalReq.getId();
                 String remark = evalReq.getRemark();
-                long teacherCourseId= evalReq.getTeacherId();
-                TeacherCourse teacher = teacherCourseRepo.findById(teacherCourseId) .orElseThrow(() -> new RuntimeException("Teacher Course not found with ID: " + teacherCourseId));
+                long teacherCourseId = evalReq.getTeacherId();
 
+                System.out.println("Score: " + score);
+                System.out.println("Criteria ID: " + criteriaId);
+                System.out.println("Remark: " + remark);
+                System.out.println("Teacher Course ID: " + teacherCourseId);
+
+                // Fetch TeacherCourse
+                TeacherCourse teacher = teacherCourseRepo.findById(teacherCourseId)
+                        .orElseThrow(() -> new RuntimeException("Teacher Course not found with ID: " + teacherCourseId));
 
                 // Fetch Criteria
                 Criteria criteria = criteriaRepo.findCriteriaById(criteriaId);
                 if (criteria == null) {
-                    return ResponseEntity.badRequest().body("Invalid criteria ID: " + criteriaId);
+                    errors.add("Invalid criteria ID: " + criteriaId);
+                    continue;
                 }
 
-                StudEval studEval=new StudEval();
+                // Create and Save StudEval
+                StudEval studEval = new StudEval();
                 studEval.setStudCriteria(criteria);
                 studEval.setStudent(student);
                 studEval.setTeacherCourse(teacher);
-                studEval=studEvalRepository.save(studEval);
-
-                Semester semester=getActiveSemester();
+                studEval = studEvalRepository.save(studEval);
 
                 // Create and Save Evaluation
                 Evaluation evaluation = new Evaluation();
                 evaluation.setScore(score);
-                evaluation.setSemester(semester);
+                evaluation.setSemester(getActiveSemester());
                 evaluation.setRemark(remark);
                 studEval.setEvaluation(evaluation);
                 evaluationRepository.save(evaluation);
 
+                System.out.println("Saved evaluation: " + evaluation);
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Error processing evaluation: " + e.getMessage());
+                System.err.println("Error processing evaluation: " + e.getMessage());
+                e.printStackTrace();
+                errors.add("Error processing evaluation: " + e.getMessage());
             }
         }
+
+        if (!errors.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Some evaluations failed: " + String.join(", ", errors));
+        }
+
         return ResponseEntity.ok("Evaluations submitted successfully!");
     }
-
     public Student getStudentByUsername(String username) {
         Users user = usersRepository.findByUsername(username);
 
         if (user != null && user.getStudent() != null) {
-            return user.getStudent();  // Return the DepartmentHead associated with the user
+            return user.getStudent();
         }
 
-        return null;  // Return null if no department head is found
+        return null;
     }
 
     public Semester getActiveSemester() {

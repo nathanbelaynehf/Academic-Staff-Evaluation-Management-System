@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import NotificationComponent from './NotificationComponent';
 
 function DepNav() {
+
+  const [showModal, setShowModal] = useState(false);
+
   return (
+    <>
     <nav className="navbar navbar-expand-xl pt-4 pb-4">
       <div className="container-fluid">
         <span
@@ -76,14 +81,16 @@ function DepNav() {
               </Link>
             </li>
             <li className="nav-item text-center pe-lg-5 ms-auto">
-              <a href="#contact" className="nav-link fw-semibold">
+              <Link className="nav-link fw-semibold" onClick={() => setShowModal(true)}>
                 Notification&nbsp;
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
       </div>
     </nav>
+    <NotificationComponent showModal={showModal} setShowModal={setShowModal} />
+    </>
   )
 }
 

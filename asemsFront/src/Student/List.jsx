@@ -37,7 +37,7 @@ function List({ setSelectedTeacher }) {
             <h2 className="text-center mb-4">Student Enrollments</h2>
                 {enrollments.map((enrollment, index) => (
                     <div className="p-4 border rounded shadow-sm row mb-5" key={index}>
-                            <h5 className="mb-3 col-5">Teacher: {enrollment.teacherUsername}</h5>
+                            <h5 className="mb-3 col-5">Teacher:{enrollment.fname} {enrollment.lname}</h5>
                             <p className="mb-0 col-5">Course: {enrollment.courseName}</p>
                             <button 
                              data-bs-toggle="modal"

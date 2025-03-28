@@ -1,28 +1,66 @@
 import React from 'react'
 import UptimeChart from './UptimeChart';
+import SystemMonitor from './SystemMonitor';
 
 function AdmMain() {
   return (
     <div className="row ms-lg-6 ms-3">
-        <div className="col-lg-6 pt-5 text-center text-lg-start">
-        <div class="row">
-                     <div class="studpic col-lg-4 col-4 col-sm-3">
-                    <img src="../public/mami.jpg" class="pic2 marp mt-5 rounded-circle" width="90%" alt=""/>
-                     </div>
-                  <div class="studdata col-lg-6 col-sm-5 col-6 mt-4">
-                    <div class="card-text mt-3 ms-3">
-                        <div class="row bg-light p-3 rounded">
-                            <p class="text-primary col-5">First Name:</p> <p class="col-7">Nathan</p>
-                            <p class="text-primary col-5">Last Name:</p> <p class="col-7">Belayneh</p>
-                            <p class="text-primary col-5">UserName:</p> <p class="col-7">HCHS1234</p>
-                            <p class="text-primary col-5">Role:</p> <p class="col-7">System Admin</p>
-                        </div></div>
-                </div>
-               
+        <div className="col-lg-6">
+        <div className="row text-center text-lg-start align-items-center">
+            {/* Student Picture */}
+            <div className="ms-4 col-lg-2 me-5 col-md-4 col-sm-4 col-6">
+              <img
+                src="../public/images.jpeg"
+                className="img-fluid rounded-circle shadow"
+                alt="Student"
+                style={{ 
+                  maxWidth: "140px", 
+                  border: "3px solid #e9ecef",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                }}
+              />
             </div>
+
+            {/* Student Data */}
+            <div className="col-lg-6 col-md-8 col-sm-8 col-12 mt-4 mb-4">
+              <div className="card bg-light p-3 rounded shadow-sm" style={{
+                background: "linear-gradient(to right, #f8f9fa, #ffffff)"
+              }}>
+                <div className="row">
+                  <div className="col-6 col-sm-6">
+                    <p className="text-primary mb-2">
+                      <i className="bi bi-person-fill me-2"></i>
+                      First Name:
+                    </p>
+                    <p className="text-primary mb-2">
+                      <i className="bi bi-person-badge-fill me-2"></i>
+                      Last Name:
+                    </p>
+                    <p className="text-primary mb-2">
+                      <i className="bi bi-person-circle me-2"></i>
+                      Username:
+                    </p>
+                    <p className="text-primary mb-2">
+                      <i className="bi bi-gender-ambiguous me-2"></i>
+                      Gender:
+                    </p>
+                  </div>
+                  <div className="col-6 col-sm-4">
+                    <p className="mb-2 fw-medium text-secondary">Kebebush</p>
+                    <p className="mb-2 fw-medium text-secondary">G/Michael</p>
+                    <p className="mb-2 fw-medium text-secondary">HCHS1234</p>
+                    <p className="mb-2 fw-medium text-secondary">Female</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4">
+          <SystemMonitor  />
+          </div>
         </div>
-        <div className="col-lg-6 pt-6">
-        <UptimeChart uptime={70} />
+        <div className="col-lg-6 pt-3">
+        <UptimeChart/>
         </div>
     </div>
   )

@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 function CriteriaEval({ selectedTeacher }) {
   const [criteria, setCriteria] = useState([]);
   const [evaluations, setEvaluations] = useState({});
+  const [activeRound, setActiveRound] = useState(null);
+
 
   useEffect(() => {
     fetch("http://localhost:8082/dh/criteria", { credentials: "include" })
@@ -16,7 +18,46 @@ function CriteriaEval({ selectedTeacher }) {
         setEvaluations(initialEvaluations);
       })
       .catch((error) => console.error("Error fetching criteria:", error));
+
+      const fetchActiveRound = async () => {
+      try {
+        const response = await fetch("http://localhost:8082/dh/round", {
+          credentials: "include", // Include credentials (cookies)
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch active round");
+        }
+        const round = await response.json();
+        setActiveRound(round);
+      } catch (error) {
+        console.error("Error fetching active round:", error);
+      }
+    };
+
+    fetchActiveRound();
   }, []);
+
+  const getOptions = () => {
+    switch (activeRound) {
+      case 1: // First round
+        return [
+          { value: "0.75", label: "Low" },
+          { value: "1.5", label: "Medium" },
+          { value: "2.25", label: "High" },
+          { value: "3", label: "Very High" },
+        ];
+      case 2: // Second round
+        return [
+          { value: "0.32", label: "Very Low" },
+          { value: "0.64", label: "Low" },
+          { value: "0.96", label: "Medium" },
+          { value: "1.28", label: "High" },
+          { value: "1.579", label: "Very High" },
+        ];
+      default: // No active round or invalid round
+        return [];
+    }
+  };
 
   const handleChange = (id, field, value) => {
     setEvaluations((prev) => ({
@@ -31,12 +72,24 @@ function CriteriaEval({ selectedTeacher }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const evaluationData = Object.keys(evaluations).map((id) => ({
-      id: parseInt(id), // Ensure the ID is a number
-      score: parseInt(evaluations[id].score), // Ensure the score is a number
-      remark: evaluations[id].remark,
-      teacherId: selectedTeacher?.id || null,
-    }));
+    const evaluationData = Object.keys(evaluations).map((id) => {
+      const parsedId = parseInt(id, 10);
+      const parsedScore = parseFloat(evaluations[id].score);
+      if (isNaN(parsedId)) {
+        console.error(`Invalid ID: ${id}`);
+        return null;
+      }
+      if (isNaN(parsedScore)) {
+        console.error(`Invalid score for ID ${id}: ${evaluations[id].score}`);
+        return null;
+      }
+      return {
+        id: parsedId,
+        score: parsedScore,
+        remark: evaluations[id].remark || "",
+        teacherId: selectedTeacher?.id || null,
+      };
+    }).filter(Boolean); // Filter out any null entries
     console.log(evaluationData);
 
     try {
@@ -49,6 +102,7 @@ function CriteriaEval({ selectedTeacher }) {
 
       if (response.ok) {
         alert("Evaluation submitted successfully!");
+        console.log(evaluationData);
       } else {
         const errorData = await response.json();
         alert("Failed to submit evaluation: " + errorData);
@@ -67,7 +121,7 @@ function CriteriaEval({ selectedTeacher }) {
             {/* Modal Header */}
             <div className="modal-header">
               <h5 className="modal-title text-secondary">
-              Evaluate {selectedTeacher ? selectedTeacher.username : "Instructor"}</h5>
+              Evaluate {selectedTeacher ? selectedTeacher.fname+" "+selectedTeacher.lname  : "Instructor"}</h5>
               <button className="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -76,19 +130,26 @@ function CriteriaEval({ selectedTeacher }) {
               <form onSubmit={handleSubmit}>
                 {criteria.map((criterion) => (
                   <div key={criterion.id} className="mb-4 row">
-                    <label className="col-8 col-form-label">
+                    <label className="col-7 col-form-label">
                       {criterion.name}
                     </label>
-                    <div className="col-1">
-                      <input
-                        type="number"
-                        min="1"
-                        max="5"
+                    <div className="col-2">
+                        <select
+                        id={`score-${criterion.id}`}
                         value={evaluations[criterion.id]?.score || ""}
                         onChange={(e) => handleChange(criterion.id, "score", e.target.value)}
                         required
                         className="form-control"
-                      />
+                      >
+                        <option value="" disabled>
+                          Score
+                        </option>
+                        {getOptions().map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                     <div className="col-3">
                       <input

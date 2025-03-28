@@ -1,13 +1,20 @@
 package com.example.asemsBack.Service;
 
+import com.example.asemsBack.Dto.DeleteCourseDto;
+import com.example.asemsBack.Dto.TeacherCourseDTO;
 import com.example.asemsBack.Model.*;
 import com.example.asemsBack.Model.Class;
 import com.example.asemsBack.Repository.*;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TeacherCourseServices {
@@ -70,5 +77,39 @@ public class TeacherCourseServices {
     public Semester getActiveSemester() {
         return semesterRepo.findByIsActive(true);
 
+    }
+
+    public List<TeacherCourseDTO> getCoursesForInstructor() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        // Fetch courses taught by the instructor
+        List<TeacherCourse> teacherCourses = teacherCourseRepo.findByTeacherUserUsername(username);
+
+        // Convert entities to DTOs
+        return teacherCourses.stream()
+                .map(course -> new TeacherCourseDTO(
+                        course.getTeacher().getUser().getUsername(),
+                        course.getCourse().getCourseName(),
+                        course.getId()
+                ))
+                .collect(Collectors.toList());
+    }
+    @Transactional
+    public void deleteCourseFromClass(DeleteCourseDto deleteCourseDto) {
+        Long classId = deleteCourseDto.getClassId();
+        Long courseId = deleteCourseDto.getCourseId();
+
+        try {
+            // Perform the deletion using the custom query
+            courseClassRepo.deleteCourseFromClass(classId, courseId);
+
+            System.out.println("Course and related records deleted successfully!");
+        } catch (Exception e) {
+            // Log the exception
+            System.err.println("Error deleting course from class: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error deleting course from class: " + e.getMessage(), e);
+        }
     }
 }
