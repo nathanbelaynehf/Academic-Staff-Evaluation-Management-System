@@ -1,9 +1,9 @@
-import React from 'react';
-import { useEvaluation } from './EvaluationProvider';
-
+import React, { useEffect, useState } from 'react';
 
 function DepartmentEvaluations() {
-  const { teachers } = useEvaluation();
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const getScoreColor = (score) => {
     if (score >= 85) return 'text-success';
@@ -11,30 +11,60 @@ function DepartmentEvaluations() {
     return 'text-warning';
   };
 
-  // Calculate department averages from the teachers data
-  const calculateDepartmentAverages = () => {
-    const departmentStats = {};
-    
-    teachers.forEach(teacher => {
-      if (!departmentStats[teacher.department]) {
-        departmentStats[teacher.department] = {
-          totalScore: 0,
-          count: 0
-        };
+  useEffect(() => {
+    const fetchDepartmentEvaluations = async () => {
+      try {
+        const response = await fetch('http://localhost:8082/ad/summary', {
+          credentials: 'include' // Include cookies for authentication
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch department evaluations');
+        }
+
+        const data = await response.json();
+        
+        // Transform the data to match the expected format
+        const formattedData = data.map(dept => ({
+          name: dept.departmentName,
+          averageResult: Math.round(dept.totalCombinedAverage ) // Convert 0-10 scale to 0-100
+        })).sort((a, b) => b.averageResult - a.averageResult);
+
+        setDepartments(formattedData);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching department evaluations:', err);
+      } finally {
+        setLoading(false);
       }
-      
-      departmentStats[teacher.department].totalScore += 
-        parseFloat(teacher.combinedTotalAvgScore || 0);
-      departmentStats[teacher.department].count += 1;
-    });
+    };
 
-    return Object.entries(departmentStats).map(([department, stats]) => ({
-      name: department,
-      averageResult: Math.round(stats.totalScore / stats.count)
-    })).sort((a, b) => b.averageResult - a.averageResult);
-  };
+    fetchDepartmentEvaluations();
+  }, []);
 
-  const departments = calculateDepartmentAverages();
+  if (loading) {
+    return (
+      <div className="card border-0 shadow-sm mt-4">
+        <div className="card-body text-center py-4">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-2 mb-0">Loading department evaluations...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="card border-0 shadow-sm mt-4">
+        <div className="card-body text-center py-4 text-danger">
+          <i className="bi bi-exclamation-triangle-fill me-2"></i>
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="card border-0 shadow-sm mt-4">

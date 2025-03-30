@@ -201,7 +201,6 @@ export default function RegStudent() {
         <>
             <div className="ms-3">
                 <h2 className="text-secondary ms-3 mt-3 mb-3">Register Student</h2>
-                {error && <div className="alert alert-danger">{error}</div>}
                 <form onSubmit={handleSubmit}>
                     {/* Username */}
                     <div className="mb-3">

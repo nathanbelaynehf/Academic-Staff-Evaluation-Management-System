@@ -1,8 +1,11 @@
 package com.example.asemsBack.Service;
 
+import com.example.asemsBack.Dto.EvaluationScoreDTO;
 import com.example.asemsBack.Dto.StudentDTO;
+import com.example.asemsBack.Dto.StudentEvaluationStatusDTO;
 import com.example.asemsBack.Model.*;
 import com.example.asemsBack.Repository.EnrollRepo;
+import com.example.asemsBack.Repository.StudEvalRepository;
 import com.example.asemsBack.Repository.StudRepo;
 import com.example.asemsBack.Repository.UserRepo;
 import org.springframework.security.core.Authentication;
@@ -11,7 +14,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +30,9 @@ public class StudentService {
 
     @Autowired
     private UserRepo userRepository;
+
+    @Autowired
+    StudEvalRepository studEvalRepository;
 
     public List<EnrollmentResponse> getEnrollmentsForAuthenticatedStudent() {
         // Fetch the authenticated student's username
@@ -111,5 +120,58 @@ public class StudentService {
         public String getLname() {
             return lname;
         }
+    }
+
+    public StudentEvaluationStatusDTO getStudentEvaluationStatus() {
+        // Get authenticated student
+        String username = getAuthenticatedUsername();
+        Users user = userRepository.findByUsername(username);
+        Student student = user.getStudent();
+
+        // Get current semester enrollments
+        List<Enrollement> enrollments = enrollementRepository.findByStudentIdAndActiveSemester(student.getId());
+        List<TeacherCourse> teacherCourses = enrollments.stream()
+                .map(Enrollement::getTeacherCourse)
+                .collect(Collectors.toList());
+
+        // Get evaluated course IDs
+        List<Long> evaluatedCourseIds = studEvalRepository.findEvaluatedTeacherCourseIds(
+                student.getId(), teacherCourses);
+
+        // Prepare response
+        int totalEnrolled = teacherCourses.size();
+        int totalEvaluated = evaluatedCourseIds.size();
+
+        // Get unevaluated courses
+        List<StudentEvaluationStatusDTO.UnevaluatedCourseDTO> unevaluatedCourses = teacherCourses.stream()
+                .filter(tc -> !evaluatedCourseIds.contains(tc.getId()))
+                .map(tc -> new StudentEvaluationStatusDTO.UnevaluatedCourseDTO(
+                        tc.getCourse().getCourseName(),
+                        tc.getTeacher().getUser().getFname() + " " + tc.getTeacher().getUser().getLname(),
+                        tc.getId()
+                ))
+                .collect(Collectors.toList());
+
+        return new StudentEvaluationStatusDTO(totalEnrolled, totalEvaluated, unevaluatedCourses);
+    }
+    public EvaluationScoreDTO calculateEvaluationScore(Long studentId) {
+        // 1. Single optimized query
+        List<StudEvalRepository.EvaluationSumDTO> courseSums = studEvalRepository.sumScoresByCourse(studentId);
+
+        if (courseSums.isEmpty()) {
+            return new EvaluationScoreDTO(BigDecimal.ZERO);
+        }
+
+        // 2. In-memory aggregation
+        BigDecimal totalSum = courseSums.stream()
+                .map(StudEvalRepository.EvaluationSumDTO::getSummedScore)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // 3. Final calculation
+        BigDecimal percentage = totalSum
+                .divide(new BigDecimal(courseSums.size() * 40), 4, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal(100));
+
+        return new EvaluationScoreDTO(percentage);
     }
 }

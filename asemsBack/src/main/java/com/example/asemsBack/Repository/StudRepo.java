@@ -15,4 +15,10 @@ public interface StudRepo  extends JpaRepository<Student,Long> {
             "FROM Student s " +
             "WHERE LOWER(s.user.username) LIKE LOWER(CONCAT('%', :username, '%'))")
     List<StudentDTO> findByUserUsernameContaining(@Param("username") String username);
+
+    @Query("SELECT COUNT(s) FROM Student s WHERE s.classes.id = :classId")
+    Long countByClasses_Id(@Param("classId") Long classId);
+
+    @Query("SELECT s FROM Student s WHERE s.classes.id = :classId")
+    List<Student> findByClasses_Id(@Param("classId") Long classId);
 }

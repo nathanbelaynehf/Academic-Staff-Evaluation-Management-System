@@ -1,52 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import StudentParticipation from './StudentParticipation';
 import DHData from './DHData';
+import StudEvalPartcipation from './StudEvalPartcipation';
 
 function DepMain() {
-  // Class data - replace with your actual data
-  const classes = [
-    { name: "Biology 101", total: 32, evaluated: 28 },
-    { name: "Chemistry 201", total: 28, evaluated: 25 },
-    { name: "Physics 301", total: 35, evaluated: 30 }
-  ];
+  const [participationRate, setParticipationRate] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchParticipationRate = async () => {
+      try {
+        const response = await fetch('http://localhost:8082/dh/stats/totals', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setParticipationRate(data.participationRate);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching participation rate:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchParticipationRate();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="row ms-lg-6 ms-3">
+        <div className="col-12 text-center">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="row ms-lg-6 ms-3">
+        <div className="col-12 alert alert-danger">
+          Error loading participation data: {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="row ms-lg-6 ms-3">
       {/* Your EXISTING student profile - COMPLETELY UNTOUCHED */}
       <div className="col-lg-6">
-      <DHData/>
-        {/* NEW: Simple Class List with Evaluation Counts */}
-        <div className="mt-5">
-          <h5 className="text-primary mb-3 ms-4 mb-2">
-            <i className="bi bi-journal-bookmark-fill me-2"></i>
-            Class Evaluation Summary
-          </h5>
-          <div className="table-responsive mt-4">
-            <table className="table table-hover table-bordered">
-              <thead className="table-primary">
-                <tr>
-                  <th className=" text-secondary">Class Name</th>
-                  <th className="text-center  text-secondary">Total Students</th>
-                  <th className="text-center  text-secondary">Evaluated</th>
-                </tr>
-              </thead>
-              <tbody>
-                {classes.map((cls, index) => (
-                  <tr key={index}>
-                    <td className=' text-secondary'>{cls.name}</td>
-                    <td className="text-center fw-bold">{cls.total}</td>
-                    <td className="text-center text-success fw-bold">{cls.evaluated}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <DHData/>
+        <StudEvalPartcipation/>
       </div>
 
       {/* Your EXISTING participation chart - COMPLETELY UNTOUCHED */}
       <div className="col-lg-6 pt-3">
-        <StudentParticipation data={60} />
+        <StudentParticipation data={participationRate || 0} />
       </div>
     </div>
   );

@@ -20,14 +20,13 @@ public interface AdEvalRepo extends JpaRepository<AcademicDeanEval,Long> {
             "WHERE a.teacher.id = :teacherId")
     List<AcademicDeanEvalDTO> findScoreAndRemarkByTeacherId(@Param("teacherId") Long teacherId);
 
-    @Query("SELECT ad FROM AcademicDeanEval ad " +
-            "JOIN ad.teacher t " +
+    @Query("SELECT NEW com.example.asemsBack.Dto.AcademicDeanEvalDTO(e.score, e.remark) " +
+            "FROM AcademicDeanEval ad " +
             "JOIN ad.evaluation e " +
-            "JOIN e.semester s " +
-            "WHERE t.user.username = :username " +
-            "AND s.id = :semesterId " +
+            "WHERE ad.teacher.user.username = :username " +
+            "AND e.semester.id = :semesterId " +
             "AND ad.round = :round")
-    AcademicDeanEval findByTeacherUsernameAndSemesterAndRound(
+    AcademicDeanEvalDTO findEvaluationDto(
             @Param("username") String username,
             @Param("semesterId") long semesterId,
             @Param("round") int round
@@ -36,4 +35,5 @@ public interface AdEvalRepo extends JpaRepository<AcademicDeanEval,Long> {
     List<AcademicDeanEval> findByAcademicDeanId(Long academicDeanId);
 
     List<AcademicDeanEval> findByTeacher(Teacher teacher);
+
 }

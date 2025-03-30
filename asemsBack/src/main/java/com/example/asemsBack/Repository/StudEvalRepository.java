@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,7 +84,51 @@ public interface StudEvalRepository extends JpaRepository<StudEval,Long> {
 
 
 
-    List<StudEval> findByTeacherCourse(TeacherCourse teacherCourse);
+
+
+    @Query(value = "SELECT s.student_id, SUM(e.score) " +
+            "FROM stud_eval s " +
+            "JOIN evaluation e ON s.eval_id = e.evalid " +
+            "JOIN teacher_course tc ON s.teacher_course_id = tc.id " +
+            "WHERE tc.teacher_id = :teacherId " +
+            "AND e.semester_id = :semesterId " +
+            "AND (SELECT c.round FROM criteria c WHERE c.id = s.criteria_id) = :round " +
+            "GROUP BY s.student_id", nativeQuery = true)
+    List<Object[]> findStudentEvaluationSumsByTeacher(
+            @Param("teacherId") Long teacherId,
+            @Param("semesterId") Long semesterId,
+            @Param("round") int round);
+
+    @Query("SELECT COUNT(DISTINCT se.student) FROM StudEval se WHERE se.student.classes.id = :classId")
+    Long countByStudent_Classes_Id(@Param("classId") Long classId);
+
+    @Query("SELECT COUNT(DISTINCT se.student.id) FROM StudEval se WHERE se.student.id IN :studentIds")
+    long countDistinctByStudentIdIn(@Param("studentIds") List<Long> studentIds);
+
+    @Query("SELECT DISTINCT se.teacherCourse.id FROM StudEval se " +
+            "WHERE se.student.id = :studentId AND se.teacherCourse IN :teacherCourses")
+    List<Long> findEvaluatedTeacherCourseIds(@Param("studentId") Long studentId,
+                                             @Param("teacherCourses") List<TeacherCourse> teacherCourses);
+    @Query("SELECT se FROM StudEval se " +
+            "JOIN FETCH se.evaluation e " +
+            "WHERE se.student.id = :studentId")
+    List<StudEval> findByStudentIds(@Param("studentId") Long studentId);
+
+    public interface EvaluationSumDTO {
+        Long getTeacherCourseId();
+        BigDecimal getSummedScore();
+    }
+
+    @Query("""
+    SELECT 
+        se.teacherCourse.id as teacherCourseId, 
+        SUM(e.score) as summedScore 
+    FROM StudEval se 
+    JOIN se.evaluation e 
+    WHERE se.student.id = :studentId 
+    GROUP BY se.teacherCourse.id
+    """)
+    List<EvaluationSumDTO> sumScoresByCourse(@Param("studentId") Long studentId);
 }
 
 

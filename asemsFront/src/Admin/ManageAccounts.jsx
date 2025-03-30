@@ -180,7 +180,9 @@ function ManageAccounts() {
     }
   return (
     <>
-    <h2 className='text-center'>Students</h2>
+     <h3 class="text-center text-primary fw-bold mb-4 py-3 bg-light border rounded shadow-sm">
+      Students
+   </h3>
     <div className="mt-3 mb-3 pe-7 ps-7">
              <input
                     type="text"
@@ -216,8 +218,9 @@ function ManageAccounts() {
                  ))}      
     </div>
 
-
-    <h2 className='text-center mt-4'>Teachers</h2>
+    <h3 class="text-center text-primary fw-bold mb-4 py-3 bg-light border rounded shadow-sm">
+      Teachers
+</h3>
     <div className="mt-3 mb-3 pe-7 ps-7">
             <input
                     type="text"
@@ -251,8 +254,9 @@ function ManageAccounts() {
                 </div>      
                  ))}      
     </div>
-
-    <h2 className='text-center mt-4'>Department Heads</h2>
+    <h3 class="text-center text-primary fw-bold mb-4 py-3 bg-light border rounded shadow-sm">
+      Department Heads
+</h3>
     <div className="mt-3 mb-3 pe-7 ps-7">
     <input
                     type="text"
@@ -289,8 +293,9 @@ function ManageAccounts() {
                  ))}      
     </div>
 
-    
-    <h2 className='text-center mt-4'>Registerars</h2>
+    <h3 class="text-center text-primary fw-bold mb-4 py-3 bg-light border rounded shadow-sm">
+      Registerars
+</h3>
         <div  className="row p-2 m-3 bg-success text-white">
                     <div className="col-5">Full Name</div>
                     <div className="col-5">User Name</div>
@@ -316,8 +321,9 @@ function ManageAccounts() {
                 </div>      
                  ))}      
     </div>
-
-    <h2 className='text-center mt-4'>Academic Dean</h2>
+    <h3 class="text-center text-primary fw-bold mb-4 py-3 bg-light border rounded shadow-sm">
+      Academic Dean
+</h3>
         <div  className="row p-2 m-3 bg-success text-white">
                     <div className="col-5">Full Name</div>
                     <div className="col-5">User Name</div>

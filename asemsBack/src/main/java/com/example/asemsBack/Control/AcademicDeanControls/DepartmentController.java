@@ -33,7 +33,7 @@ public class DepartmentController {
 
     @PostMapping("/department")
     public ResponseEntity<String> addDepartment(@RequestBody Department department){
-        departmentService.addDapartment(department);
+        departmentService .addDepartment(department);
         return ResponseEntity.ok("Teacher assigned to course successfully");
     }
 

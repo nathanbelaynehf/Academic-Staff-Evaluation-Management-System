@@ -3,6 +3,7 @@ package com.example.asemsBack.Control.SystemAdminControls;
 import com.example.asemsBack.Model.Department;
 import com.example.asemsBack.Model.Users;
 import com.example.asemsBack.Repository.DepartmentRepo;
+import com.example.asemsBack.Repository.UserRepo;
 import com.example.asemsBack.Service.DHRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -22,6 +24,9 @@ public class DepartmentHeadRegistration {
 
     @Autowired
     DepartmentRepo departmentRepo;
+
+    @Autowired
+    UserRepo userRepo;
 
     private BCryptPasswordEncoder passwordEncoder=new BCryptPasswordEncoder(10);
 
@@ -74,5 +79,11 @@ public class DepartmentHeadRegistration {
     @GetMapping("/department")
     public List<Department> ShowDepartments(){
         return departmentRepo.findAll();
+    }
+
+    @GetMapping("/check-username")
+    public ResponseEntity<?> checkUsername(@RequestParam String username) {
+        boolean exists = userRepo.existsByUsernameIgnoreCase(username);
+        return ResponseEntity.ok().body(Map.of("available", !exists));
     }
 }

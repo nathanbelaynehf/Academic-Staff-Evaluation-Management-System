@@ -5,14 +5,16 @@ import com.example.asemsBack.Dto.DepartmentEvaluationSummaryDTO;
 import com.example.asemsBack.Model.*;
 import com.example.asemsBack.Repository.*;
 import com.example.asemsBack.Service.AcademicDeanDataService;
-import com.example.asemsBack.Service.DeptEvalService;
-import com.example.asemsBack.Service.EvaluationSummaryService;
+import com.example.asemsBack.Service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -28,12 +30,18 @@ public class DashBoardController {
     @Autowired
     AcademicDeanDataService academicDeanDataService;
 
-    @Autowired
-    EvaluationSummaryService evaluationSummaryService;
+   @Autowired
+    DepartmentService departmentService;
 
     @GetMapping("/summary")
-    public List<DepartmentEvaluationSummaryDTO> getDepartmentEvaluationSummaries() {
-        return evaluationSummaryService.getDepartmentEvaluationSummaries();
+    public ResponseEntity<?> getDepartmentEvaluationSummaries() {
+        try {
+            List<DepartmentEvaluationSummaryDTO> results = departmentService.getDepartmentEvaluationSummaries();
+            return ResponseEntity.ok(results);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", e.getMessage()));
+        }
     }
 
 

@@ -65,9 +65,15 @@ public interface DeptEvalRepo extends JpaRepository<DeptEval,Long> {
             @Param("teacherId") Long teacherId);
 
 
-
-
     List<DeptEval> findByTeacher(Teacher teacher);
 
-
+    @Query(value = "SELECT de.department_head_id, SUM(e.score) " +
+            "FROM dept_eval de " +
+            "JOIN evaluation e ON de.eval_id = e.evalid " +
+            "WHERE de.teacher_id = :teacherId " +
+            "AND e.semester_id = :semesterId " +
+            "GROUP BY de.department_head_id", nativeQuery = true)
+    List<Object[]> findDeptHeadEvaluationSumsByTeacher(
+            @Param("teacherId") Long teacherId,
+            @Param("semesterId") Long semesterId);
 }

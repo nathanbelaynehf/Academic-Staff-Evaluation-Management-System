@@ -1,7 +1,6 @@
 package com.example.asemsBack.Control.TeacherControls;
 
 import com.example.asemsBack.Dto.AcademicDeanEvalDTO;
-import com.example.asemsBack.Model.AcademicDeanEval;
 import com.example.asemsBack.Model.Semester;
 import com.example.asemsBack.Repository.AdEvalRepo;
 import com.example.asemsBack.Repository.SemesterRepo;
@@ -24,76 +23,79 @@ import java.util.Date;
 public class ShowAcaDeanEval {
 
     @Autowired
-    AdEvalRepo academicDeanEvals;
+    private AdEvalRepo academicDeanEvals;
 
     @Autowired
-    SemesterRepo semesterRepo;
+    private SemesterRepo semesterRepo;
 
     @GetMapping("/academic-dean-evaluation")
     public ResponseEntity<?> getAcademicDeanEvaluation() {
         try {
-            // Fetch the authenticated teacher's username
-            String username = getAuthenticatedUsername();
+            long startTime = System.currentTimeMillis();
 
-            // Fetch the active semester
+            // 1. Get authenticated username
+            String username = getAuthenticatedUsername();
+            System.out.println("Authentication took: " + (System.currentTimeMillis() - startTime) + "ms");
+
+            // 2. Get active semester
+            long semesterTime = System.currentTimeMillis();
             Semester activeSemester = semesterRepo.findByIsActive(true);
             if (activeSemester == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("No active semester found.");
             }
+            System.out.println("Semester lookup took: " + (System.currentTimeMillis() - semesterTime) + "ms");
 
-            // Determine the active round
+            // 3. Determine active round
+            long roundTime = System.currentTimeMillis();
             int activeRound = getActiveRound(activeSemester);
             if (activeRound == 0) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("No active evaluation round.");
             }
+            System.out.println("Round determination took: " + (System.currentTimeMillis() - roundTime) + "ms");
 
-            // Fetch the Academic Dean evaluation for the teacher, semester, and round
-            AcademicDeanEval academicDeanEval = academicDeanEvals.findByTeacherUsernameAndSemesterAndRound(
-                    username, // Pass the authenticated teacher's username
-                    activeSemester.getId(), // Pass semester ID
-                    activeRound // Pass active round
+            // 4. Fetch evaluation data using DTO projection
+            long queryTime = System.currentTimeMillis();
+            AcademicDeanEvalDTO evaluation = academicDeanEvals.findEvaluationDto(
+                    username,
+                    activeSemester.getId(),
+                    activeRound
             );
 
-            // Create a DTO for the response
-            AcademicDeanEvalDTO response;
-            if (academicDeanEval == null) {
-                // If no evaluation is found, return a default DTO with score 0 and empty remark
-                response = new AcademicDeanEvalDTO(new BigDecimal("0.1"), "");
-            } else {
-                // If evaluation is found, populate the DTO with the score and remark
-                response = new AcademicDeanEvalDTO(
-                        academicDeanEval.getEvaluation().getScore(),
-                        academicDeanEval.getEvaluation().getRemark()
-                );
-            }
+            // If no evaluation found, return default values
+            AcademicDeanEvalDTO response = evaluation != null
+                    ? evaluation
+                    : new AcademicDeanEvalDTO(new BigDecimal("0.1"), "");
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            System.out.println("Evaluation query took: " + (System.currentTimeMillis() - queryTime) + "ms");
+            System.out.println("Total endpoint execution: " + (System.currentTimeMillis() - startTime) + "ms");
+
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
-            // Log the exception for debugging
-            System.err.println("Error fetching Academic Dean evaluation: " + e.getMessage());
+            System.err.println("Error in getAcademicDeanEvaluation: " + e.getMessage());
             e.printStackTrace();
-
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An unexpected error occurred: " + e.getMessage());
+                    .body("An error occurred: " + e.getMessage());
         }
     }
 
     private String getAuthenticatedUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName(); // Assumes username is stored in SecurityContext
+        return authentication.getName();
     }
 
     private int getActiveRound(Semester semester) {
-        Date currentDate = new Date(System.currentTimeMillis());
+        Date currentDate = new Date();
 
-        if (currentDate.after(semester.getStartof1stRoundEval()) && currentDate.before(semester.getStartof2ndRoundEval())) {
-            return 1; // First round is active
-        } else if (currentDate.after(semester.getStartof2ndRoundEval()) && currentDate.before(semester.getEndDate())) {
-            return 2; // Second round is active
-        } else {
-            return 0; // No active round
+        if (currentDate.after(semester.getStartof1stRoundEval()) &&
+                currentDate.before(semester.getStartof2ndRoundEval())) {
+            return 1;
+        } else if (currentDate.after(semester.getStartof2ndRoundEval()) &&
+                currentDate.before(semester.getEndDate())) {
+            return 2;
         }
+        return 0;
     }
 }

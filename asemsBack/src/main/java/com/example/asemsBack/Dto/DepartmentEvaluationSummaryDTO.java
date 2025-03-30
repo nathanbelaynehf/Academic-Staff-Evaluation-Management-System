@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DepartmentEvaluationSummaryDTO {
     private String departmentName;
-//    private double avgStudentEvaluation;
+    private double avgStudentEvaluation;
     private double avgDeptHeadEvaluation;
     private double avgAcademicDeanEvaluation;
     private double totalCombinedAverage;

@@ -120,13 +120,42 @@ export default function RegistrarRegistration() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!validateForm()) {
             return;
         }
-
+    
+        const username = inputRefs.current.username.value;
+        
+        // 1. First check for username duplication
+        try {
+            const checkResponse = await fetch(`http://localhost:8082/admin/check-username?username=${encodeURIComponent(username)}`, {
+                credentials: "include"
+            });
+            
+            if (!checkResponse.ok) {
+                throw new Error('Username check failed');
+            }
+            
+            const { available } = await checkResponse.json();
+            
+            if (!available) {
+                setValidationErrors(prev => ({
+                    ...prev,
+                    username: "This username is already taken"
+                }));
+                inputRefs.current.username.focus();
+                return;
+            }
+        } catch (error) {
+            console.error('Username check error:', error);
+            setError("Failed to verify username availability");
+            return;
+        }
+    
+        // 2. Proceed with registration if username is available
         const formData = {
-            username: inputRefs.current.username.value,
+            username: username,
             password: inputRefs.current.password.value,
             role: "ROLE_REG",
             dob: inputRefs.current.dob.value,
@@ -145,7 +174,7 @@ export default function RegistrarRegistration() {
             lname: inputRefs.current.lname.value,
             gname: inputRefs.current.gname.value,
         };
-
+    
         try {
             const response = await fetch('http://localhost:8082/admin/reg', {
                 method: 'POST',
@@ -155,11 +184,11 @@ export default function RegistrarRegistration() {
                 },
                 body: new URLSearchParams(formData).toString(),
             });
-
+    
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-
+    
             const result = await response.text();
             console.log(result);
             
@@ -174,7 +203,6 @@ export default function RegistrarRegistration() {
             setError("Registration failed! Please try again.");
         }
     };
-
     return (
         <>
             <div className="ms-3">
